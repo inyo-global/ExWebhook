@@ -8,7 +8,7 @@ config :webhook,
     hosts: [localhost: 32794],
     group_id: "ex_webhook",
     topics: ["batchTransactionProcessedEvents"],
-    offset_reset_policy: :earliest
+    offset_reset_policy: {:timestamp, 1731542400000} # 2024-11-15
   ],
   batch_size: 1000,
   batch_timeout: 60_000
