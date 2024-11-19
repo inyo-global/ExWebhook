@@ -22,6 +22,7 @@ defmodule ExWebhook.DatabaseUtilsTest do
           {Test.Repo, [url: "postgresql://localhost:1234/postgres"]},
           restart: :transient
         )
+
       assert {:connection_error, %DBConnection.ConnectionError{}} =
                DatabaseUtils.safe_call(fn ->
                  query =

@@ -1,8 +1,12 @@
 defmodule ExWebhook.WebhookExecutor do
+  @moduledoc """
+  This module is reposible to execute the webhook request
+  and save the result in the database
+  """
   alias ExWebhook.DatabaseUtils
-  alias ExWebhook.WebhookCallRepository
   alias ExWebhook.Schema.Webhook
   alias ExWebhook.Schema.WebhookCall
+  alias ExWebhook.WebhookCallRepository
   alias ExWebhook.WebhookRepository
 
   @spec execute_webhook(String.t(), String.t()) :: :ok | :webhook_not_found
@@ -11,24 +15,27 @@ defmodule ExWebhook.WebhookExecutor do
   end
 
   defp execute_hook({:ok, []}, _payload), do: :webhook_not_found
+
   defp execute_hook({:ok, hooks}, payload) do
-    results = hooks
-    |> Enum.map(&%{hook: &1, payload: payload})
-    |> Enum.map(&execute_hook/1)
-    |> Enum.reduce([], fn result, acc ->
-      case result do
-        {:ok, _} -> acc
-        error -> [error | acc]
-      end
-    end)
+    results =
+      hooks
+      |> Enum.map(&%{hook: &1, payload: payload})
+      |> Enum.map(&execute_hook/1)
+      |> Enum.reduce([], fn result, acc ->
+        case result do
+          {:ok, _} -> acc
+          error -> [error | acc]
+        end
+      end)
+
     case results do
       [] -> :ok
-      erros -> { :error, erros}
+      erros -> {:error, erros}
     end
   end
 
   @spec execute_webhook(String.t(), DatabaseUtils.database_error()) :: :ok
-  defp execute_hook(error, _payload), do: IO.inspect(error, label: "errr")
+  defp execute_hook(error, _payload), do: error
 
   defp execute_hook(%{hook: hook, payload: payload}) do
     HTTPoison.post(hook.url, payload, [{"Content-Type", "application/jsonlines"}])

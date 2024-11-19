@@ -3,9 +3,8 @@ defmodule ExWebhook.WebhookCallRepository do
   Webhook Repository
   """
   alias ExWebhook.DatabaseUtils
-  alias ExWebhook.Schema.WebhookCall
   alias ExWebhook.Repo
-  alias ExWebhook.DatabaseUtils
+  alias ExWebhook.Schema.WebhookCall
 
   @spec save_webhook_call(WebhookCall.t()) ::
           {:ok, [WebhookCall.t()] | DatabaseUtils.database_error()}

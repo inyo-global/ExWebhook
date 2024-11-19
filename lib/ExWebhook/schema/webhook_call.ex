@@ -8,12 +8,12 @@ defmodule ExWebhook.Schema.WebhookCall do
   typed_schema "webhook_call" do
     @moduledoc "Webhook struct"
     @typedoc "Webhook struct"
-    field :success, :boolean, enforce: true, null: false
-    field :response_status, :integer
-    field :response_body, :string
-    field :request_body, :string
-    field :error, :string
-    belongs_to :webhook, ExWebhook.Schema.Webhook
+    field(:success, :boolean, enforce: true, null: false)
+    field(:response_status, :integer)
+    field(:response_body, :string)
+    field(:request_body, :string)
+    field(:error, :string)
+    belongs_to(:webhook, ExWebhook.Schema.Webhook)
 
     timestamps(inserted_at: :created_at, updated_at: false)
   end

@@ -29,7 +29,9 @@ defmodule ExWebhookTest do
 
   test "When batch reachs the timeout, them emit even if the max size is not reached" do
     tenant_id = UUID.uuid4()
-    ref = Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
+
+    ref =
+      Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
 
     assert_receive {:ack, ^ref, successful, _failed}, batch_timeout() + 50
     assert length(successful) == 1
@@ -37,7 +39,9 @@ defmodule ExWebhookTest do
 
   test "When batch does not reachs the timeout and neither the max size, do not emmit" do
     tenant_id = UUID.uuid4()
-    ref = Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
+
+    ref =
+      Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
 
     refute_receive {:ack, ^ref, _successful, _failed}, batch_timeout() - 10
   end

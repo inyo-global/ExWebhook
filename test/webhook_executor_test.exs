@@ -1,8 +1,7 @@
 defmodule ExWebhook.WebhookExecutorTest do
-  alias ExWebhook.WebhookExecutor
   alias ExWebhook.Factory
+  alias ExWebhook.WebhookExecutor
   use ExUnit.Case, async: true
-
 
   test "When execute with success, then all records are saved" do
     hook = Factory.insert!(:webhook)

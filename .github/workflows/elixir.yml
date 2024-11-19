@@ -1,0 +1,46 @@
+name: Elixir CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test: 
+    runs-on: ubuntu-latest
+    name: Test & Checks
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1.18.2
+        with:
+          elixir-version: '1.17.3'
+          otp-version: '27.1.2'
+      - run: mix deps.get
+      - run: mix format --check-formatted        
+      - run: mix credo --strict
+      - name: Retrieve PLT Cache
+        uses: actions/cache@v3
+        id: plt-cache
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plts-${{ hashFiles('**/mix.lock') }}
+
+      - name: Create PLTs
+        if: steps.plt-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix dialyzer --plt        
+      - run: mix dialyzer --no-check
+      - run: mix test
+  build:
+    if: github.ref == 'refs/heads/main'
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: inyo-global/ExWebhook:${{ github.sha }}

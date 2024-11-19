@@ -1,4 +1,5 @@
 defmodule ExWebhook.Factory do
+  @moduledoc false
   alias ExWebhook.Repo
   alias ExWebhook.Schema.Webhook
 
@@ -6,7 +7,7 @@ defmodule ExWebhook.Factory do
     %Webhook{
       url: "https://postman-echo.com/post",
       tenant_id: UUID.uuid4(),
-      is_batch: true,
+      is_batch: true
     }
   end
 

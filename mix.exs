@@ -10,7 +10,13 @@ defmodule ExWebhook.MixProject do
       config_path: "config/config.exs",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        webhook: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -31,10 +37,11 @@ defmodule ExWebhook.MixProject do
       {:uuid, "~> 1.1"},
       {:ecto_sql, "~> 3.12"},
       {:postgrex, "~> 0.15"},
+      {:httpoison, "~> 2.2.1"},
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:httpoison, "~> 2.2.1"}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
