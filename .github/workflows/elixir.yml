@@ -40,7 +40,7 @@ jobs:
     needs: test
     steps:
     - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: inyo-global/ExWebhook:${{ github.sha }}
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        tags: inyo-global/ExWebhook:${{ github.sha }}
