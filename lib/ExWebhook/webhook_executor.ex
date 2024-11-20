@@ -38,7 +38,12 @@ defmodule ExWebhook.WebhookExecutor do
   defp execute_hook(error, _payload), do: error
 
   defp execute_hook(%{hook: hook, payload: payload}) do
-    HTTPoison.post(hook.url, payload, [{"Content-Type", "application/jsonlines"}])
+    HTTPoison.post(
+      hook.url,
+      payload,
+      [{"Content-Type", "application/jsonlines"}],
+      recv_timeout: 60_000
+    )
     |> save_webhook_call(hook, payload)
   end
 
