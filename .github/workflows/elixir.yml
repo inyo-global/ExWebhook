@@ -19,19 +19,7 @@ jobs:
       - run: mix deps.get
       - run: mix format --check-formatted        
       - run: mix credo --strict
-      - name: Retrieve PLT Cache
-        uses: actions/cache@v3
-        id: plt-cache
-        with:
-          path: priv/plts
-          key: ${{ runner.os }}-plts-${{ hashFiles('**/mix.lock') }}
-
-      - name: Create PLTs
-        if: steps.plt-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p priv/plts
-          mix dialyzer --plt        
-      - run: mix dialyzer --no-check
+      - run: mix dialyzer
       - uses: actions/checkout@v4
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@v2.0.1     
