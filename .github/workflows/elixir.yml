@@ -32,6 +32,11 @@ jobs:
           mkdir -p priv/plts
           mix dialyzer --plt        
       - run: mix dialyzer --no-check
+      - name: Run docker-compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./docker/docker-compose.yml"      
+      - run: mix ecto.migrate
       - run: mix test
   build:
     if: github.ref == 'refs/heads/main'

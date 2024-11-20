@@ -5,6 +5,7 @@ defmodule ExWebhook.Factory do
 
   def build(:webhook) do
     %Webhook{
+      id: UUID.uuid4(),
       url: "https://postman-echo.com/post",
       tenant_id: UUID.uuid4(),
       is_batch: true
