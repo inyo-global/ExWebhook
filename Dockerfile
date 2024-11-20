@@ -18,7 +18,7 @@ RUN mix do deps.get, deps.compile, release
 
 FROM elixir:1.17.3-alpine
 
-RUN apk -U upgrade --no-cache && apk add gcompat  ncurses --no-cache 
+RUN apk -U upgrade --no-cache && apk add gcompat ncurses-libs --no-cache 
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
 
