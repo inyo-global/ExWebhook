@@ -33,9 +33,7 @@ jobs:
           mix dialyzer --plt        
       - run: mix dialyzer --no-check
       - name: Run docker-compose
-        uses: hoverkraft-tech/compose-action@v2.0.1
-        with:
-          compose-file: "./docker/docker-compose.yml"      
+        uses: hoverkraft-tech/compose-action@v2.0.1     
       - run: mix ecto.migrate
       - run: mix test
   build:

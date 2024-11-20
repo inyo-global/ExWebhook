@@ -5,7 +5,7 @@ config :webhook, :ecto_repos, [ExWebhook.Repo]
 config :webhook,
   producer_module: BroadwayKafka.Producer,
   producer_options: [
-    hosts: [localhost: 32794],
+    hosts: ["my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"],
     group_id: "ex_webhook",
     topics: ["batchTransactionProcessedEvents"],
     # 2024-11-15
