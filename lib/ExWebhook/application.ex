@@ -9,7 +9,8 @@ defmodule ExWebhook.Application do
     # List all child processes to be supervised
     children = [
       {ExWebhook.Repo, []},
-      {ExWebhook.Processor, []}
+      {ExWebhook.Processor, []},
+      {TcpHealthCheck, [port: 4321]}
       # Starts a worker by calling: Friends.Worker.start_link(arg)
       # {Friends.Worker, arg},
     ]
