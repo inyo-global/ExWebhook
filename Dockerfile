@@ -16,7 +16,7 @@ COPY . .
 # instalar as dependencias
 RUN mix do deps.get, deps.compile, release
 
-FROM debian:buster-slim AS app
+FROM debian:trixie-slim AS app
 
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
