@@ -32,6 +32,7 @@ jobs:
           mkdir -p priv/plts
           mix dialyzer --plt        
       - run: mix dialyzer --no-check
+      - uses: actions/checkout@v4
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@v2.0.1     
       - run: mix ecto.migrate
@@ -46,4 +47,4 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: true
-        tags: inyo-global/ExWebhook:${{ github.sha }}
+        tags: inyo-global/ex-webhook:${{ github.sha }}
