@@ -3,6 +3,7 @@ defmodule ExWebhook.Processor do
   Webhook Processor
   """
   use Broadway
+  require Logger
   alias Broadway.BatchInfo
   alias Broadway.Message
   alias ExWebhook.WebhookExecutor
@@ -48,10 +49,23 @@ defmodule ExWebhook.Processor do
   @impl true
   @spec handle_batch(:batch_webhook, [Broadway.Message.t()], BatchInfo.t(), any()) :: any()
   def handle_batch(:batch_webhook, messages, batch_info, _) do
-    messages
-    |> Enum.map(& &1.data)
-    |> Enum.map_join("\n", &Jason.encode!/1)
-    |> WebhookExecutor.execute_webhook(batch_info.batch_key)
+    Logger.info("processing batch with size #{batch_info.size} and key #{batch_info.batch_key}")
+
+    result =
+      messages
+      |> Enum.map(& &1.data)
+      |> Enum.map_join("\n", &Jason.encode!/1)
+      |> WebhookExecutor.execute_webhook(batch_info.batch_key)
+
+    case result do
+      :ok ->
+        Logger.info("batch with size #{batch_info.size} and key #{batch_info.batch_key} success")
+
+      error ->
+        Logger.error(
+          "batch with size #{batch_info.size} and key #{batch_info.batch_key} failed with #{inspect(error)}"
+        )
+    end
 
     messages
   end

@@ -1,5 +1,12 @@
 import Config
 
+config :logger,
+  level: :debug,
+  backends: [:console],
+  compile_time_purge_matching: [
+    [level_lower_than: :debug]
+  ]
+
 config :webhook,
   producer_module: Broadway.DummyProducer,
   producer_options: [

@@ -6,7 +6,7 @@ defmodule ExWebhook.DatabaseUtilsTest do
   import ExUnit.CaptureLog
   require Logger
 
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   defmodule Test.Repo do
     use Ecto.Repo,
