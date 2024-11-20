@@ -63,14 +63,14 @@ defmodule ExWebhook.WebhookExecutor do
   end
 
   defp save_webhook_call(
-         {:error, %HTTPoison.Error{reason: reason}},
+         {:error, error = %HTTPoison.Error{}},
          hook = %Webhook{},
          payload
        ) do
     %WebhookCall{
       webhook_id: hook.id,
       success: false,
-      error: to_string(reason),
+      error: HTTPoison.Error.message(error),
       request_body: payload
     }
     |> save_webhook_call()
