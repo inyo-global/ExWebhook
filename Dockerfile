@@ -21,6 +21,8 @@ FROM debian:trixie-slim AS app
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
 
+EXPOSE 4321
+
 # executar o servidor
 ENTRYPOINT [ "/app/bin/webhook" ]
 CMD ["start"]
