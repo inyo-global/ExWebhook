@@ -65,7 +65,7 @@ defmodule ExWebhook.WebhookExecutor do
     %WebhookCall{
       webhook_id: hook.id,
       success: false,
-      error: reason,
+      error: to_string(reason),
       request_body: payload
     }
     |> save_webhook_call()
