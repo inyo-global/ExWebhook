@@ -9,7 +9,7 @@ config :webhook, ExWebhook.Repo,
 config :webhook, :batch_processor_options,
   producer_module: BroadwaySQS.Producer,
   producer_options: [
-    queue_url: "http://localhost:4566/000000000000/sqs-demo",
+    queue_url: "http://localstack:4566/000000000000/sqs-demo",
     config: [
     scheme: "http://",
     host: "localhost",
@@ -24,7 +24,7 @@ config :webhook, :batch_processor_options,
 config :webhook, :single_processor_options,
   producer_module: BroadwaySQS.Producer,
   producer_options: [
-    queue_url: "http://localhost:4566/000000000000/sqs-demo",
+    queue_url: "http://localstack:4566/000000000000/sqs-demo",
     config: [
     scheme: "http://",
     host: "localhost",
