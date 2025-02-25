@@ -34,7 +34,6 @@ defmodule ExWebhook.WebhookExecutor do
     end
   end
 
-  @spec execute_webhook(String.t(), DatabaseUtils.database_error()) :: :ok
   defp execute_hook(error, _payload), do: error
 
   defp execute_hook(%{hook: hook, payload: payload}) do
