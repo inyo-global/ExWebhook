@@ -1,5 +1,8 @@
 FROM elixir:1.17.3 AS builder
 
+ENV LANG="en_US.UTF-8"
+ENV LC_COLLATE="en_US.UTF-8"
+ENV LC_CTYPE="en_US.UTF-8"
 
 ENV MIX_ENV=prod
 # instalando o gerenciar de pacotes do elixir
@@ -18,6 +21,9 @@ RUN mix do deps.get, deps.compile, release
 
 FROM debian:trixie-slim AS app
 
+ENV LANG="en_US.UTF-8"
+ENV LC_COLLATE="en_US.UTF-8"
+ENV LC_CTYPE="en_US.UTF-8"
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
 

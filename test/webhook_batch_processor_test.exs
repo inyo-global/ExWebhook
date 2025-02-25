@@ -3,7 +3,7 @@ defmodule ExWebhookTest do
 
   test "test serializing json and setting batch_key" do
     tenant_id = UUID.uuid4()
-    ref = Broadway.test_message(ExWebhook.Processor, generate_message(tenant_id))
+    ref = Broadway.test_message(ExWebhook.BatchProcessor, generate_message(tenant_id))
 
     assert_receive {:ack, ^ref,
                     [
@@ -21,7 +21,7 @@ defmodule ExWebhookTest do
       1..(batch_size() * 2)
       |> Enum.map(fn _ -> generate_message(tenant_id) end)
 
-    ref = Broadway.test_batch(ExWebhook.Processor, messages, batch_mode: :bulk)
+    ref = Broadway.test_batch(ExWebhook.BatchProcessor, messages, batch_mode: :bulk)
 
     assert_receive {:ack, ^ref, successful, _failed}
     assert length(successful) == batch_size()
@@ -31,7 +31,9 @@ defmodule ExWebhookTest do
     tenant_id = UUID.uuid4()
 
     ref =
-      Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
+      Broadway.test_batch(ExWebhook.BatchProcessor, [generate_message(tenant_id)],
+        batch_mode: :bulk
+      )
 
     assert_receive {:ack, ^ref, successful, _failed}, batch_timeout() + 50
     assert length(successful) == 1
@@ -41,7 +43,9 @@ defmodule ExWebhookTest do
     tenant_id = UUID.uuid4()
 
     ref =
-      Broadway.test_batch(ExWebhook.Processor, [generate_message(tenant_id)], batch_mode: :bulk)
+      Broadway.test_batch(ExWebhook.BatchProcessor, [generate_message(tenant_id)],
+        batch_mode: :bulk
+      )
 
     refute_receive {:ack, ^ref, _successful, _failed}, batch_timeout() - 10
   end
@@ -52,7 +56,7 @@ defmodule ExWebhookTest do
 
     ref =
       Broadway.test_batch(
-        ExWebhook.Processor,
+        ExWebhook.BatchProcessor,
         [
           generate_message(tenant1_id),
           generate_message(tenant2_id),
@@ -89,9 +93,9 @@ defmodule ExWebhookTest do
                    batch_timeout() + 50
   end
 
-  defp batch_timeout, do: Application.get_env(:webhook, :batch_timeout, [])
+  defp batch_timeout, do: Application.get_env(:webhook, :batch_producer_options)[:batch_timeout]
 
-  defp batch_size, do: Application.get_env(:webhook, :batch_size, [])
+  defp batch_size, do: Application.fetch_env!(:webhook, :batch_producer_options)[:batch_size]
 
   defp generate_message(tenantId) do
     """

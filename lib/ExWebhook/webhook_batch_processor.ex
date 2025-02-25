@@ -1,6 +1,8 @@
-defmodule ExWebhook.Processor do
+defmodule ExWebhook.BatchProcessor do
   @moduledoc """
-  Webhook Processor
+  Webhook Batch Processor - This Module is responsible to send webhook messages grouped by tenant,
+   in batches of `batch_size` and timeout of `batch_timeout`.
+  The messages are grouped in a single [jsonl](https://jsonlines.org) payload.
   """
   use Broadway
   require Logger
@@ -9,10 +11,11 @@ defmodule ExWebhook.Processor do
   alias ExWebhook.WebhookExecutor
 
   def start_link(_opts) do
-    producer_module = Application.fetch_env!(:webhook, :producer_module)
-    producer_options = Application.get_env(:webhook, :producer_options, [])
-    batch_size = Application.get_env(:webhook, :batch_size, [])
-    batch_timeout = Application.get_env(:webhook, :batch_timeout, [])
+    options = Application.fetch_env!(:webhook, :batch_producer_options)
+    producer_module = Keyword.fetch!(options, :producer_module)
+    producer_options = Keyword.fetch!(options, :producer_options)
+    batch_size = Keyword.fetch!(options, :batch_size)
+    batch_timeout = Keyword.fetch!(options, :batch_timeout)
 
     Broadway.start_link(__MODULE__,
       name: __MODULE__,

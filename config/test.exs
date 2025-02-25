@@ -7,7 +7,7 @@ config :logger,
     [level_lower_than: :debug]
   ]
 
-config :webhook,
+config :webhook, :batch_producer_options,
   producer_module: Broadway.DummyProducer,
   producer_options: [
     hosts: [localhost: 32778],
@@ -16,3 +16,11 @@ config :webhook,
   ],
   batch_size: 5,
   batch_timeout: 100
+
+config :webhook, :batch_producer_options,
+  producer_module: Broadway.DummyProducer,
+  producer_options: [
+    hosts: [localhost: 32778],
+    group_id: "webhook",
+    topics: ["documentUpdatedEvents"]
+  ]
