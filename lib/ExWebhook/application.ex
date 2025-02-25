@@ -10,7 +10,7 @@ defmodule ExWebhook.Application do
     children = [
       {ExWebhook.Repo, []},
       {ExWebhook.BatchProcessor, []},
-      # {ExWebhook.SingleProcessor, []},
+      {ExWebhook.SingleProcessor, []},
       {TcpHealthCheck, [port: 4321]}
       # Starts a worker by calling: Friends.Worker.start_link(arg)
       # {Friends.Worker, arg},

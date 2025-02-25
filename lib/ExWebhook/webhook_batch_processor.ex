@@ -11,7 +11,7 @@ defmodule ExWebhook.BatchProcessor do
   alias ExWebhook.WebhookExecutor
 
   def start_link(_opts) do
-    options = Application.fetch_env!(:webhook, :batch_producer_options)
+    options = Application.fetch_env!(:webhook, :batch_processor_options)
     producer_module = Keyword.fetch!(options, :producer_module)
     producer_options = Keyword.fetch!(options, :producer_options)
     batch_size = Keyword.fetch!(options, :batch_size)

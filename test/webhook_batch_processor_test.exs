@@ -1,4 +1,4 @@
-defmodule ExWebhookTest do
+defmodule ExWebhook.BatchProcessorTest do
   use ExUnit.Case, async: true
 
   test "test serializing json and setting batch_key" do
@@ -93,9 +93,9 @@ defmodule ExWebhookTest do
                    batch_timeout() + 50
   end
 
-  defp batch_timeout, do: Application.get_env(:webhook, :batch_producer_options)[:batch_timeout]
+  defp batch_timeout, do: Application.get_env(:webhook, :batch_processor_options)[:batch_timeout]
 
-  defp batch_size, do: Application.fetch_env!(:webhook, :batch_producer_options)[:batch_size]
+  defp batch_size, do: Application.fetch_env!(:webhook, :batch_processor_options)[:batch_size]
 
   defp generate_message(tenantId) do
     """

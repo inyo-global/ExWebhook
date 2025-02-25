@@ -2,7 +2,7 @@ import Config
 
 config :webhook, :ecto_repos, [ExWebhook.Repo]
 
-config :webhook, :batch_producer_options,
+config :webhook, :batch_processor_options,
   producer_module: BroadwayKafka.Producer,
   producer_options: [
     hosts:
@@ -15,7 +15,7 @@ config :webhook, :batch_producer_options,
   batch_size: 1000,
   batch_timeout: 60_000
 
-config :webhook, :single_producer_options,
+config :webhook, :single_processor_options,
   producer_module: BroadwayKafka.Producer,
   producer_options: [
     hosts:
