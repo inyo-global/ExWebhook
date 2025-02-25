@@ -1,0 +1,31 @@
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+
+  localstack:
+    container_name: "localstack_main"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      - SERVICES=sqs
+      - INIT_SCRIPTS_DIR=/docker-entrypoint-initaws.d
+      - DEBUG=true
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  webhook:
+    image:  ghcr.io/inyo-global/ex-webhook:ee3e4eb2ec2d07e5745e99d0eb06a18c40c12a3b
+    volumes:
+      - ./runtime.exs:/app/releases/0.1.0/runtime.exs

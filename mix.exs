@@ -31,8 +31,9 @@ defmodule ExWebhook.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:broadway, "~> 1.1.0"},
+      {:broadway, "~> 1.2"},
       {:broadway_kafka, "~> 0.4.4"},
+      {:broadway_sqs, "~> 0.7.4"},
       {:jason, "~> 1.4"},
       {:uuid, "~> 1.1"},
       {:ecto_sql, "~> 3.12"},
