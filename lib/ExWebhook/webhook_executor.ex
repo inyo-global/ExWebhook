@@ -3,7 +3,6 @@ defmodule ExWebhook.WebhookExecutor do
   This module is reposible to execute the webhook request
   and save the result in the database
   """
-  alias ExWebhook.DatabaseUtils
   alias ExWebhook.Schema.Webhook
   alias ExWebhook.Schema.WebhookCall
   alias ExWebhook.WebhookCallRepository

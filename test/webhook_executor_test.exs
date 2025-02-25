@@ -5,6 +5,6 @@ defmodule ExWebhook.WebhookExecutorTest do
 
   test "When execute with success, then all records are saved" do
     hook = Factory.insert!(:webhook)
-    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook.tenant_id)
+    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook.tenant_id, true)
   end
 end
