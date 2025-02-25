@@ -31,7 +31,7 @@ defmodule ExWebhook.SingleProcessor do
       |> Jason.decode!()
       |> Map.fetch!("tenantId")
 
-    WebhookExecutor.execute_webhook(message_data, tenant_id)
+    WebhookExecutor.execute_webhook(message_data, tenant_id, false)
     message
   end
 end

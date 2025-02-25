@@ -58,7 +58,7 @@ defmodule ExWebhook.BatchProcessor do
       messages
       |> Enum.map(& &1.data)
       |> Enum.map_join("\n", &Jason.encode!/1)
-      |> WebhookExecutor.execute_webhook(batch_info.batch_key)
+      |> WebhookExecutor.execute_webhook(batch_info.batch_key, true)
 
     case result do
       :ok ->

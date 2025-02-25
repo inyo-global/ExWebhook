@@ -9,9 +9,9 @@ defmodule ExWebhook.WebhookExecutor do
   alias ExWebhook.WebhookCallRepository
   alias ExWebhook.WebhookRepository
 
-  @spec execute_webhook(String.t(), String.t()) :: :ok | :webhook_not_found
-  def execute_webhook(payload, tenantId) do
-    execute_hook(WebhookRepository.list_webhooks(tenantId, true), payload)
+  @spec execute_webhook(String.t(), String.t(), boolean()) :: :ok | :webhook_not_found
+  def execute_webhook(payload, tenantId, is_batch) do
+    execute_hook(WebhookRepository.list_webhooks(tenantId, is_batch), payload)
   end
 
   defp execute_hook({:ok, []}, _payload), do: :webhook_not_found
