@@ -12,7 +12,7 @@ config :webhook, :batch_processor_options,
     queue_url: "http://localstack:4566/000000000000/sqs-demo",
     config: [
     scheme: "http://",
-    host: "localhost",
+    host: "localstack",
     port: 4566,
     access_key_id: "",
     secret_access_key: ""
@@ -27,7 +27,7 @@ config :webhook, :single_processor_options,
     queue_url: "http://localstack:4566/000000000000/sqs-demo",
     config: [
     scheme: "http://",
-    host: "localhost",
+    host: "localstack",
     port: 4566,
     access_key_id: "",
     secret_access_key: ""

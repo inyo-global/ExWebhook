@@ -3,6 +3,7 @@ services:
     container_name: postgres_container
     image: postgres
     environment:
+      ELIXIR_ERL_OPTIONS: "+fnu"
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:

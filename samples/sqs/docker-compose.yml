@@ -26,6 +26,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   webhook:
-    image: ghcr.io/inyo-global/ex-webhook:5b5b58f5f1809568ab9510eb508d5625c8d38ef9
+    image: ghcr.io/inyo-global/ex-webhook:e7e1b09e57c692fc74ffc1daa45d00fd2e134de2
     volumes:
       - ./runtime.exs:/app/releases/0.1.0/runtime.exs
