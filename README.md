@@ -1,21 +1,12 @@
-# ExExWebhook
+# ExWebhook
 
-**TODO: Add description**
+ExWebhook transform any messages from a [brodway](https://github.com/dashbitco/broadway) producer (Kafka, SQS, Google Pub/sub and etc.) in a webhook.  
 
-## Installation
+## Features
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_webhook` to your list of dependencies in `mix.exs`:
+* <b>Tenant Aware</b> - Every webhook is tied to a tenant_id, and every message should have a tenant_id field to know wich webhook should be called 
+* <b>Batch messages in a single webhook call</b> as a jsonline webhooks (this is optinal)
 
-```elixir
-def deps do
-  [
-    {:webhook, "~> 0.1.0"}
-  ]
-end
-```
+## Running
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/ex_webhook>.
-
+The easiest way to getting start with ExWebhook is using docker: 

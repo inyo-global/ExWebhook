@@ -29,8 +29,4 @@ COPY --from=builder /app/_build/prod/rel/webhook /app
 
 EXPOSE 4321
 
-# executar o servidor
-ENTRYPOINT [ "/app/bin/webhook" ]
-CMD ["start"]
-
-
+CMD ["sh", "-c", "/app/bin/webhook eval ExWebhook.Release.migrate && /app/bin/webhook start"]
