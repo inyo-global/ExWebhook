@@ -26,12 +26,23 @@ defmodule ExWebhook.SingleProcessor do
   @impl true
   @spec handle_message(any(), Broadway.Message.t(), any()) :: Broadway.Message.t()
   def handle_message(_processor_name, message = %Broadway.Message{data: message_data}, _context) do
+    Logger.info("processing single message #{message_data}")
+
     tenant_id =
       message_data
       |> Jason.decode!()
       |> Map.fetch!("tenantId")
 
-    WebhookExecutor.execute_webhook(message_data, tenant_id, false)
+    result = WebhookExecutor.execute_webhook(message_data, tenant_id, false)
+
+    case result do
+      :ok ->
+        Logger.info("message #{message_data} processed with success")
+
+      error ->
+        Logger.error(Logger.info("message #{message_data} failed with #{inspect(error)}"))
+    end
+
     message
   end
 end
