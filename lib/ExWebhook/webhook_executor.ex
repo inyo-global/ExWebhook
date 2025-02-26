@@ -40,7 +40,7 @@ defmodule ExWebhook.WebhookExecutor do
     HTTPoison.post(
       hook.url,
       payload,
-      [{"Content-Type", "application/jsonlines"}],
+      [{"Content-Type", content_type(is_batch)}],
       recv_timeout: 60_000
     )
     |> save_webhook_call(hook, payload)
