@@ -2,8 +2,8 @@
 
 ExWebhook transforms messages from a Broadway producer (Kafka, SQS, Google Pub/Sub, etc.) into webhooks.
 
-Features
-- Tenant Aware: Each webhook is tied to a tenant_id, and every message should have a tenant_id field to determine which webhook to call.
+## Features
+- Tenant Aware: Each webhook is tied to a `tenantId`, and every message should have a `tenantId` field to determine which webhook to call.
 - Batch messages in a single webhook call: as JSONLine webhooks (optional).
 
 ## Running
@@ -14,6 +14,7 @@ The runtime.exs file is configured as:
 
 ### Batch Processor
 
+```
 config :webhook, :batch_processor_options,
   producer_module: BroadwaySQS.Producer,
   producer_options: [
@@ -28,10 +29,11 @@ config :webhook, :batch_processor_options,
   ],
   batch_size: 3,
   batch_timeout: 3_000
-
+```
 
 ### Single Processor
 
+```
 config :webhook, :single_processor_options,
   producer_module: BroadwaySQS.Producer,
   producer_options: [
@@ -44,7 +46,7 @@ config :webhook, :single_processor_options,
       secret_access_key: ""
     ]
   ]
-
+```
 
 ## Execution
-Just run the run.sh script, which emits messages and executes the webhook. You can check the webhook call status using the database.
+Just start the docker using `docker compose up`and execute the `run.sh` script, which emits messages and executes the webhook. You can check the webhook call status using the database.
