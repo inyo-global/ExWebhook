@@ -10,15 +10,16 @@ defmodule ExWebhook.WebhookExecutor do
 
   @spec execute_webhook(String.t(), String.t(), boolean()) :: :ok | :webhook_not_found
   def execute_webhook(payload, tenantId, is_batch) do
-    execute_hook(WebhookRepository.list_webhooks(tenantId, is_batch), payload)
+    hooks = WebhookRepository.list_webhooks(tenantId, is_batch)
+    execute_hook(hooks, payload, is_batch)
   end
 
-  defp execute_hook({:ok, []}, _payload), do: :webhook_not_found
+  defp execute_hook({:ok, []}, _payload, is_batch), do: :webhook_not_found
 
-  defp execute_hook({:ok, hooks}, payload) do
+  defp execute_hook({:ok, hooks}, payload, is_batch) do
     results =
       hooks
-      |> Enum.map(&%{hook: &1, payload: payload})
+      |> Enum.map(&%{hook: &1, payload: payload, is_batch: is_batch})
       |> Enum.map(&execute_hook/1)
       |> Enum.reduce([], fn result, acc ->
         case result do
@@ -35,7 +36,7 @@ defmodule ExWebhook.WebhookExecutor do
 
   defp execute_hook(error, _payload), do: error
 
-  defp execute_hook(%{hook: hook, payload: payload}) do
+  defp execute_hook(%{hook: hook, payload: payload, is_batch: is_batch}) do
     HTTPoison.post(
       hook.url,
       payload,
@@ -44,6 +45,9 @@ defmodule ExWebhook.WebhookExecutor do
     )
     |> save_webhook_call(hook, payload)
   end
+
+  defp content_type(true), do: "application/jsonlines"
+  defp content_type(false), do: "application/json"
 
   defp save_webhook_call(
          {:ok, %HTTPoison.Response{status_code: status_code, body: body}},
