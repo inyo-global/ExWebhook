@@ -27,6 +27,6 @@ ENV LC_CTYPE="en_US.UTF-8"
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
 
-EXPOSE 4321
+EXPOSE 4000
 
 CMD ["sh", "-c", "/app/bin/webhook eval ExWebhook.Release.migrate && /app/bin/webhook start"]
