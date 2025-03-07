@@ -11,7 +11,8 @@ defmodule ExWebhook.Application do
       {ExWebhook.Repo, []},
       {ExWebhook.BatchProcessor, []},
       {ExWebhook.SingleProcessor, []},
-      {TcpHealthCheck, [port: 4321]}
+      {TcpHealthCheck, [port: 4321]},
+      {ExWebhook.Web.Endpoint, []}
       # Starts a worker by calling: Friends.Worker.start_link(arg)
       # {Friends.Worker, arg},
     ]

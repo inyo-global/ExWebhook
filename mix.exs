@@ -40,6 +40,8 @@ defmodule ExWebhook.MixProject do
       {:postgrex, "~> 0.15"},
       {:httpoison, "~> 2.2.1"},
       {:tcp_health_check, "~> 0.1.0"},
+      {:phoenix, "~> 1.7"},
+      {:bandit, "~> 1.5"},
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},

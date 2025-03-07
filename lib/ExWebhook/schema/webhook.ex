@@ -1,5 +1,6 @@
 defmodule ExWebhook.Schema.Webhook do
   use TypedEctoSchema
+  import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   @foreign_key_type Ecto.UUID
@@ -12,5 +13,11 @@ defmodule ExWebhook.Schema.Webhook do
     field(:is_batch, :boolean)
 
     timestamps(inserted_at: :created_at, updated_at: false)
+  end
+
+  def changeset(webhook, attrs) do
+    webhook
+    |> cast(attrs, [:tenant_id, :url, :is_batch])
+    |> validate_required([:tenant_id, :url])
   end
 end

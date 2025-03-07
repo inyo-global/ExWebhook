@@ -14,7 +14,7 @@ defmodule ExWebhook.WebhookExecutor do
     execute_hook(hooks, payload, is_batch)
   end
 
-  defp execute_hook({:ok, []}, _payload, is_batch), do: :webhook_not_found
+  defp execute_hook({:ok, []}, _payload, _is_batch), do: :webhook_not_found
 
   defp execute_hook({:ok, hooks}, payload, is_batch) do
     results =
@@ -34,7 +34,7 @@ defmodule ExWebhook.WebhookExecutor do
     end
   end
 
-  defp execute_hook(error, _payload), do: error
+  defp execute_hook(error, _payload, _is_batch), do: error
 
   defp execute_hook(%{hook: hook, payload: payload, is_batch: is_batch}) do
     HTTPoison.post(
