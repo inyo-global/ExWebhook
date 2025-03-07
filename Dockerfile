@@ -24,6 +24,7 @@ FROM debian:trixie-slim AS app
 ENV LANG="en_US.UTF-8"
 ENV LC_COLLATE="en_US.UTF-8"
 ENV LC_CTYPE="en_US.UTF-8"
+ENV PHX_SERVER="true"
 
 COPY --from=builder /app/_build/prod/rel/webhook /app
 
