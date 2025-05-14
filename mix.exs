@@ -31,10 +31,12 @@ defmodule ExWebhook.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:brod,
+       override: true,
+       git: "https://github.com/inyo-global/brod",
+       ref: "bbbffad17fc9d3b7da3ed01b63a1d3c7cd087653"},
       {:broadway, "~> 1.2.1"},
-      {:brod, "~> 4.4.0"},
-      {:broadway_kafka,
-       git: "https://github.com/inyo-global/brod", ref: "bbbffad17fc9d3b7da3ed01b63a1d3c7cd087653"},
+      {:broadway_kafka, "~> 0.4.4"},
       {:broadway_sqs, "~> 0.7.4"},
       {:jason, "~> 1.4"},
       {:uuid, "~> 1.1"},
