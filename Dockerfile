@@ -1,4 +1,4 @@
-FROM elixir:1.17.3 AS builder
+FROM elixir:1.18.3 AS builder
 
 ENV LANG="en_US.UTF-8"
 ENV LC_COLLATE="en_US.UTF-8"
