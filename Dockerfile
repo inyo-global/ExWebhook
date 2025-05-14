@@ -6,6 +6,9 @@ ENV LC_CTYPE="en_US.UTF-8"
 
 ENV MIX_ENV=prod
 # instalando o gerenciar de pacotes do elixir
+
+RUN apt update && apt install cmake -y
+
 RUN mix local.hex --force && \
     mix local.rebar --force
 
