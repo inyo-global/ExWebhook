@@ -7,14 +7,21 @@ defmodule ExWebhook.WebhookRepository do
   alias ExWebhook.Repo
   alias ExWebhook.Schema.Webhook
 
-  @spec list_webhooks(binary(), boolean()) ::
+  @spec list_webhooks(binary(), boolean() | nil) ::
           {:ok, [Webhook.t()]} | DatabaseUtils.database_error()
   def list_webhooks(tenant, is_batch) do
     query =
       from(w in Webhook,
-        where: [tenant_id: ^tenant, is_batch: ^is_batch],
+        where: w.tenant_id == ^tenant,
         select: w
       )
+
+    query =
+      if is_nil(is_batch) do
+        query
+      else
+        where(query, [w], w.is_batch == ^is_batch)
+      end
 
     DatabaseUtils.safe_call(fn -> Repo.all(query) end)
   end
