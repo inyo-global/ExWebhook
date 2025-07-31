@@ -4,7 +4,6 @@ defmodule ExWebhook.Schema.WebhookCall do
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   @foreign_key_type Ecto.UUID
 
-  # weather is the DB table
   typed_schema "webhook_call" do
     @moduledoc "Webhook struct"
     @typedoc "Webhook struct"
