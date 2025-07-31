@@ -19,13 +19,20 @@ defmodule ExWebhook.Web.WebhookControllerTest do
     assert Enum.empty?(response_body["webhooks"])
   end
 
-  test "GET /organizations/:tenant/webhooks should return 200 and registered webhooks", %{conn: conn} do
+  test "GET /organizations/:tenant/webhooks should return 200 and registered webhooks", %{
+    conn: conn
+  } do
     tenant_id = UUID.uuid4()
 
     create_webhook_request(conn, tenant_id, "https://example.com/hook1", false, [])
     create_webhook_request(conn, tenant_id, "https://example.com/hook2", true, [])
     create_webhook_request(conn, tenant_id, "https://example.com/hook3", false, ["event3"])
-    create_webhook_request(conn, tenant_id, "https://example.com/hook4", true, ["event4", "event5"])
+
+    create_webhook_request(conn, tenant_id, "https://example.com/hook4", true, [
+      "event4",
+      "event5"
+    ])
+
     create_webhook_request(conn, UUID.uuid4(), "https://postman-echo.com/post", false, [])
 
     conn = get(conn, "/organizations/#{tenant_id}/webhooks")
@@ -35,16 +42,37 @@ defmodule ExWebhook.Web.WebhookControllerTest do
 
     assert is_list(response_body["webhooks"])
     assert length(response_body["webhooks"]) == 4
+
     assert_webhooks = [
-      %{"tenantId" => tenant_id, "url" => "https://example.com/hook1", "isBatch" => false, "types" => [] },
-      %{"tenantId" => tenant_id, "url" => "https://example.com/hook2", "isBatch" => true, "types" => [] },
-      %{"tenantId" => tenant_id, "url" => "https://example.com/hook3", "isBatch" => false, "types" => ["event3"] },
-      %{"tenantId" => tenant_id, "url" => "https://example.com/hook4", "isBatch" => true, "types" => ["event4", "event5"] },
+      %{
+        "tenantId" => tenant_id,
+        "url" => "https://example.com/hook1",
+        "isBatch" => false,
+        "types" => []
+      },
+      %{
+        "tenantId" => tenant_id,
+        "url" => "https://example.com/hook2",
+        "isBatch" => true,
+        "types" => []
+      },
+      %{
+        "tenantId" => tenant_id,
+        "url" => "https://example.com/hook3",
+        "isBatch" => false,
+        "types" => ["event3"]
+      },
+      %{
+        "tenantId" => tenant_id,
+        "url" => "https://example.com/hook4",
+        "isBatch" => true,
+        "types" => ["event4", "event5"]
+      }
     ]
 
     sorted_expected_webhooks =
       Enum.sort_by(assert_webhooks, & &1["url"])
-      |> Enum.map(fn webhook -> %{webhook | "types" => Enum.sort(webhook["types"]) } end)
+      |> Enum.map(fn webhook -> %{webhook | "types" => Enum.sort(webhook["types"])} end)
 
     sorted_response_webhooks =
       Enum.sort_by(response_body["webhooks"], & &1["url"])
@@ -61,7 +89,8 @@ defmodule ExWebhook.Web.WebhookControllerTest do
     endpoint = "/organizations/#{tenant_id}/webhooks"
     body = generate_webhook_payload(url, is_batch, types)
 
-    response = conn
+    response =
+      conn
       |> put_req_header("content-type", "application/json")
       |> post(endpoint, body)
 
