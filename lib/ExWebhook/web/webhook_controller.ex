@@ -4,7 +4,28 @@ defmodule ExWebhook.Web.WebhookController do
   """
   use ExWebhook.Web, :controller
   alias ExWebhook.Schema.Webhook, as: WebhookSchema
+  alias ExWebhook.WebhookRepository
   require Logger
+
+  def index(conn, %{"tenant" => tenant_id}) do
+    case WebhookRepository.list_webhooks(tenant_id, nil) do
+      {:ok, webhooks} ->
+        formatted_webhooks = Enum.map(webhooks, fn webhook ->
+          %{
+            id: webhook.id,
+            tenantId: webhook.tenant_id,
+            url: webhook.url,
+            isBatch: webhook.is_batch,
+            createdAt: webhook.created_at,
+          }
+        end)
+        json(conn, %{webhooks: formatted_webhooks})
+      {:error, error} ->
+        Logger.error("Error creating webhook: #{inspect(error)}")
+
+        {:internal_server_error, "Internal server error"}
+    end
+  end
 
   def new(conn, %{"tenant" => tenant}) do
     case conn.body_params do
@@ -43,7 +64,7 @@ defmodule ExWebhook.Web.WebhookController do
              |> WebhookSchema.changeset(%{
                "url" => url,
                "is_batch" => is_batch,
-               "tenant_id" => tenant
+               "tenant_id" => tenant,
              })
              |> ExWebhook.Repo.insert() do
           {:ok, entity} ->

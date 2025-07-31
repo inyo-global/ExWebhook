@@ -9,5 +9,6 @@ defmodule ExWebhook.Web.Router do
     pipe_through(:api)
 
     post("/webhooks", WebhookController, :new)
+    get("/webhooks", WebhookController, :index)
   end
 end

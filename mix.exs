@@ -31,10 +31,11 @@ defmodule ExWebhook.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:brod,
-       override: true,
-       git: "https://github.com/inyo-global/brod",
-       ref: "bbbffad17fc9d3b7da3ed01b63a1d3c7cd087653"},
+      # {:brod,
+      #  override: true,
+      #  git: "https://github.com/inyo-global/brod",
+      #  ref: "bbbffad17fc9d3b7da3ed01b63a1d3c7cd087653"},
+      {:kafka_protocol, "~> 4.2"},
       {:broadway, "~> 1.2.1"},
       {:broadway_kafka, "~> 0.4.4"},
       {:broadway_sqs, "~> 0.7.4"},
@@ -49,7 +50,8 @@ defmodule ExWebhook.MixProject do
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      # {:crc32cer, "~> 1.0.3", only: [:dev, :test], runtime: false}
       # {:testcontainers, "~> 1.11"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
