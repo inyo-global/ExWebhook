@@ -8,17 +8,26 @@ defmodule ExWebhook.WebhookExecutor do
   alias ExWebhook.WebhookCallRepository
   alias ExWebhook.WebhookRepository
 
-  @spec execute_webhook(String.t(), String.t(), boolean()) :: :ok | :webhook_not_found
-  def execute_webhook(payload, tenantId, is_batch) do
+  @spec execute_webhook(String.t(), String.t(), boolean(), String.t() | nil) :: :ok | :webhook_not_found
+  def execute_webhook(payload, tenantId, is_batch, topic \\ nil) do
     hooks = WebhookRepository.list_webhooks(tenantId, is_batch)
-    execute_hook(hooks, payload, is_batch)
+    execute_hook(hooks, payload, is_batch, topic)
   end
 
-  defp execute_hook({:ok, []}, _payload, _is_batch), do: :webhook_not_found
+  defp execute_hook({:ok, []}, _payload, _is_batch, _topic), do: :webhook_not_found
 
-  defp execute_hook({:ok, hooks}, payload, is_batch) do
+  defp execute_hook({:ok, hooks}, payload, is_batch, topic) do
+    hooks_to_process =
+      if topic do
+        Enum.filter(hooks, fn hook ->
+          Enum.member?(hook.types, topic) or hook.types == []
+        end)
+      else
+        hooks
+      end
+
     results =
-      hooks
+      hooks_to_process
       |> Enum.map(&%{hook: &1, payload: payload, is_batch: is_batch})
       |> Enum.map(&execute_hook/1)
       |> Enum.reduce([], fn result, acc ->
@@ -34,7 +43,7 @@ defmodule ExWebhook.WebhookExecutor do
     end
   end
 
-  defp execute_hook(error, _payload, _is_batch), do: error
+  defp execute_hook(error, _payload, _is_batch, _topic), do: error
 
   defp execute_hook(%{hook: hook, payload: payload, is_batch: is_batch}) do
     HTTPoison.post(
