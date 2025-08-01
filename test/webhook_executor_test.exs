@@ -13,7 +13,7 @@ defmodule ExWebhook.WebhookExecutorTest do
     assert :ok = WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
   end
 
-  test "When execute success with types, then all records are saved" do
+  test "When execute success with events, then all records are saved" do
     hook1 = Factory.insert!(:webhook, %{}, ["user.created", "user.updated"])
 
     assert :ok =

@@ -15,7 +15,7 @@ defmodule ExWebhook.Schema.Webhook do
     field(:tenant_id, :string)
     field(:url, :string)
     field(:is_batch, :boolean)
-    has_many(:webhook_types, ExWebhook.Schema.WebhookType)
+    has_many(:webhook_events, ExWebhook.Schema.WebhookEvent)
 
     timestamps(inserted_at: :created_at, updated_at: false)
   end

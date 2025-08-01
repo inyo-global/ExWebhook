@@ -10,7 +10,7 @@ defmodule ExWebhook.Schema.WebhookCall do
   @foreign_key_type Ecto.UUID
 
   typed_schema "webhook_call" do
-    @typedoc "Webhook struct"
+    @typedoc "WebhookCall struct"
     field(:success, :boolean, enforce: true, null: false)
     field(:response_status, :integer)
     field(:response_body, :string)

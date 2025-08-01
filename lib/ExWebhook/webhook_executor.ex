@@ -22,8 +22,8 @@ defmodule ExWebhook.WebhookExecutor do
     hooks_to_process =
       if topic do
         Enum.filter(hooks, fn hook ->
-          webhook_type_names = Enum.map(hook.webhook_types, fn type -> type.type_name end)
-          Enum.member?(webhook_type_names, topic) or hook.webhook_types == []
+          webhook_event_names = Enum.map(hook.webhook_events, fn event -> event.event_name end)
+          Enum.member?(webhook_event_names, topic) or hook.webhook_events == []
         end)
       else
         hooks
