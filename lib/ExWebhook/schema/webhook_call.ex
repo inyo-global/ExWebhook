@@ -1,11 +1,15 @@
 defmodule ExWebhook.Schema.WebhookCall do
+  @moduledoc """
+  Represents a record of a webhook execution.
+
+  This schema stores the request and response details of a webhook call.
+  """
   use TypedEctoSchema
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   @foreign_key_type Ecto.UUID
 
   typed_schema "webhook_call" do
-    @moduledoc "Webhook struct"
     @typedoc "Webhook struct"
     field(:success, :boolean, enforce: true, null: false)
     field(:response_status, :integer)

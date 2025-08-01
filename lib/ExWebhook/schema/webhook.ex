@@ -1,4 +1,9 @@
 defmodule ExWebhook.Schema.Webhook do
+  @moduledoc """
+  Represents a webhook.
+
+  This schema defines the main properties of a webhook, like its URL and tenant.
+  """
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -6,7 +11,6 @@ defmodule ExWebhook.Schema.Webhook do
   @foreign_key_type Ecto.UUID
 
   typed_schema "webhook" do
-    @moduledoc "Webhook struct"
     @typedoc "Webhook struct"
     field(:tenant_id, :string)
     field(:url, :string)

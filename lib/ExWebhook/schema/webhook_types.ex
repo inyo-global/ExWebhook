@@ -1,4 +1,9 @@
 defmodule ExWebhook.Schema.WebhookType do
+  @moduledoc """
+  Represents a webhook type.
+
+  This schema is used to define the types of events a webhook can be subscribed to.
+  """
   use TypedEctoSchema
   import Ecto.Changeset
 
@@ -6,7 +11,6 @@ defmodule ExWebhook.Schema.WebhookType do
   @foreign_key_type Ecto.UUID
 
   typed_schema "webhook_types" do
-    @moduledoc "Webhook struct"
     @typedoc "Webhook struct"
     field(:type_name, :string)
     belongs_to(:webhook, ExWebhook.Schema.Webhook)
