@@ -4,7 +4,7 @@ defmodule ExWebhook.Web.WebhookController do
   """
   use ExWebhook.Web, :controller
   alias ExWebhook.Schema.Webhook, as: WebhookSchema
-  alias ExWebhook.Schema.WebhookType, as: WebhookTypeSchema
+  alias ExWebhook.Schema.WebhookEvent, as: WebhookEventSchema
   alias ExWebhook.WebhookRepository
   require Logger
 
@@ -18,7 +18,7 @@ defmodule ExWebhook.Web.WebhookController do
               tenantId: webhook.tenant_id,
               url: webhook.url,
               isBatch: webhook.is_batch,
-              types: Enum.map(webhook.webhook_types, fn wt -> wt.type_name end),
+              events: Enum.map(webhook.webhook_events, fn wt -> wt.event_name end),
               createdAt: webhook.created_at
             }
           end)
@@ -42,44 +42,49 @@ defmodule ExWebhook.Web.WebhookController do
   end
 
   def new(conn, %{"tenant" => tenant}) do
-    case conn.body_params do
-      %{"url" => url, "isBatch" => is_batch, "types" => types} ->
-        case create_webhook(%{
-               "url" => url,
-               "isBatch" => is_batch,
-               "tenant" => tenant,
-               "types" => types
-             }) do
-          {:ok, entity} ->
-            formatted_types = Enum.map(entity.webhook_types, fn wt -> wt.type_name end)
-
-            conn
-            |> put_status(:created)
-            |> json(%{
-              id: entity.id,
-              isBatch: entity.is_batch,
-              url: entity.url,
-              types: formatted_types
-            })
-
-          {http_error, error_message} ->
-            conn
-            |> put_status(http_error)
-            |> json(%{error: error_message})
-        end
-
-      _ ->
+    with {:ok, params} <- validate_webhook_params(conn.body_params),
+         {:ok, entity} <- create_webhook(Map.put(params, "tenant", tenant)) do
+      conn
+      |> put_status(:created)
+      |> json(%{
+        id: entity.id,
+        isBatch: entity.is_batch,
+        url: entity.url,
+        events: Enum.map(entity.webhook_events, fn wt -> wt.event_name end)
+      })
+    else
+      {:error, error_message} ->
         conn
         |> put_status(:bad_request)
-        |> json(%{error: "Invalid parameters"})
+        |> json(%{error: error_message})
+
+      {http_error, error_message} ->
+        conn
+        |> put_status(http_error)
+        |> json(%{error: error_message})
     end
+  end
+
+  defp validate_webhook_params(params = %{"url" => url}) do
+    events = Map.get(params, "events", [])
+
+    if not is_list(events) or not Enum.all?(events, &is_binary/1) do
+      {:error, "Events must be a list of strings."}
+    else
+      is_batch = Map.get(params, "isBatch", false)
+      {:ok, %{"url" => url, "isBatch" => is_batch, "events" => events}}
+    end
+  end
+
+  defp validate_webhook_params(_) do
+    {:error, "Invalid parameters."}
   end
 
   defp create_webhook(%{
          "url" => url,
          "isBatch" => is_batch,
          "tenant" => tenant,
-         "types" => types
+         "events" => events
        }) do
     uri = URI.parse(url)
 
@@ -91,20 +96,20 @@ defmodule ExWebhook.Web.WebhookController do
         {:bad_request, "Invalid URL"}
 
       {"https", _} ->
-        case create_webhook_with_types(
+        case create_webhook_with_events(
                %{
                  "url" => url,
                  "is_batch" => is_batch,
                  "tenant_id" => tenant
                },
-               types
+               events
              ) do
           {:ok, entity} ->
             {:ok, entity}
 
           {:error, error} ->
             Logger.error(
-              "Error creating webhook from create_webhook_with_types: #{inspect(error)}"
+              "Error creating webhook from create_webhook_with_events: #{inspect(error)}"
             )
 
             {:internal_server_error, error}
@@ -115,8 +120,8 @@ defmodule ExWebhook.Web.WebhookController do
     end
   end
 
-  defp create_webhook_with_types(webhook_params, type_names) do
-    webhook_type_attrs = Enum.map(type_names, fn name -> %{type_name: name} end)
+  defp create_webhook_with_events(webhook_params, event_names) do
+    webhook_event_attrs = Enum.map(event_names, fn name -> %{event_name: name} end)
 
     webhook_changeset =
       %WebhookSchema{}
@@ -124,18 +129,18 @@ defmodule ExWebhook.Web.WebhookController do
 
     webhook_changeset =
       webhook_changeset
-      |> Ecto.Changeset.cast_assoc(:webhook_types,
-        with: &WebhookTypeSchema.changeset/2,
+      |> Ecto.Changeset.cast_assoc(:webhook_events,
+        with: &WebhookEventSchema.changeset/2,
         required: false
       )
 
     final_changeset =
       webhook_changeset
-      |> Ecto.Changeset.put_assoc(:webhook_types, webhook_type_attrs)
+      |> Ecto.Changeset.put_assoc(:webhook_events, webhook_event_attrs)
 
     case ExWebhook.Repo.insert(final_changeset) do
       {:ok, entity} ->
-        {:ok, ExWebhook.Repo.preload(entity, :webhook_types)}
+        {:ok, ExWebhook.Repo.preload(entity, :webhook_events)}
 
       {:error, error} ->
         Logger.error("Error creating webhook (unexpected): #{inspect(error)}")

@@ -2,7 +2,7 @@ defmodule ExWebhook.Factory do
   @moduledoc false
   alias ExWebhook.Repo
   alias ExWebhook.Schema.Webhook
-  alias ExWebhook.Schema.WebhookType
+  alias ExWebhook.Schema.WebhookEvent
 
   def build(:webhook) do
     %Webhook{
@@ -13,19 +13,19 @@ defmodule ExWebhook.Factory do
     }
   end
 
-  def build(:webhook, attrs, types_names \\ []) do
+  def build(:webhook, attrs, events_names \\ []) do
     webhook = build(:webhook) |> struct!(attrs)
 
-    webhook_types =
-      Enum.map(types_names, fn name ->
-        %WebhookType{type_name: name}
+    webhook_events =
+      Enum.map(events_names, fn name ->
+        %WebhookEvent{event_name: name}
       end)
 
-    %{webhook | webhook_types: webhook_types}
+    %{webhook | webhook_events: webhook_events}
   end
 
-  def insert!(:webhook, attrs \\ [], types_names \\ []) do
-    webhook = build(:webhook, attrs, types_names)
+  def insert!(:webhook, attrs \\ [], events_names \\ []) do
+    webhook = build(:webhook, attrs, events_names)
     Repo.insert!(webhook)
   end
 end
