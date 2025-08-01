@@ -15,15 +15,51 @@ defmodule ExWebhook.WebhookExecutorTest do
 
   test "When execute success with types, then all records are saved" do
     hook1 = Factory.insert!(:webhook, %{}, ["user.created", "user.updated"])
-    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "user.created")
-    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "user.updated")
-    assert :webhook_not_found = WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "any")
-    assert :webhook_not_found = WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "any")
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook1.tenant_id,
+               true,
+               "user.created"
+             )
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook1.tenant_id,
+               true,
+               "user.updated"
+             )
+
+    assert :webhook_not_found =
+             WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "any")
+
+    assert :webhook_not_found =
+             WebhookExecutor.execute_webhook("test_payload", hook1.tenant_id, true, "any")
 
     hook2 = Factory.insert!(:webhook, %{is_batch: false}, ["user.created", "user.updated"])
-    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "user.created")
-    assert :ok = WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "user.updated")
-    assert :webhook_not_found = WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
-    assert :webhook_not_found = WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook2.tenant_id,
+               false,
+               "user.created"
+             )
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook2.tenant_id,
+               false,
+               "user.updated"
+             )
+
+    assert :webhook_not_found =
+             WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
+
+    assert :webhook_not_found =
+             WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
   end
 end
