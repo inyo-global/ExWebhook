@@ -50,7 +50,7 @@ defmodule ExWebhook.MixProject do
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
       # {:crc32cer, "~> 1.0.3", only: [:dev, :test], runtime: false}
       # {:testcontainers, "~> 1.11"}
       # {:dep_from_hexpm, "~> 0.3.0"},

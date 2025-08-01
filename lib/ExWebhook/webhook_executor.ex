@@ -8,10 +8,28 @@ defmodule ExWebhook.WebhookExecutor do
   alias ExWebhook.WebhookCallRepository
   alias ExWebhook.WebhookRepository
 
-  @spec execute_webhook(String.t(), String.t(), boolean()) :: :ok | :webhook_not_found
-  def execute_webhook(payload, tenantId, is_batch) do
-    hooks = WebhookRepository.list_webhooks(tenantId, is_batch)
-    execute_hook(hooks, payload, is_batch)
+  @spec execute_webhook(String.t(), String.t(), boolean(), String.t() | nil) ::
+          :ok | :webhook_not_found
+  def execute_webhook(payload, tenantId, is_batch, topic \\ nil) do
+    WebhookRepository.list_webhooks(tenantId, is_batch)
+    |> filter_hooks_by_topic(topic)
+    |> execute_hook(payload, is_batch)
+  end
+
+  defp filter_hooks_by_topic({:ok, []}, _topic), do: {:ok, []}
+
+  defp filter_hooks_by_topic({:ok, hooks}, topic) do
+    hooks_to_process =
+      if topic do
+        Enum.filter(hooks, fn hook ->
+          webhook_type_names = Enum.map(hook.webhook_types, fn type -> type.type_name end)
+          Enum.member?(webhook_type_names, topic) or hook.webhook_types == []
+        end)
+      else
+        hooks
+      end
+
+    {:ok, hooks_to_process}
   end
 
   defp execute_hook({:ok, []}, _payload, _is_batch), do: :webhook_not_found
@@ -33,8 +51,6 @@ defmodule ExWebhook.WebhookExecutor do
       erros -> {:error, erros}
     end
   end
-
-  defp execute_hook(error, _payload, _is_batch), do: error
 
   defp execute_hook(%{hook: hook, payload: payload, is_batch: is_batch}) do
     HTTPoison.post(

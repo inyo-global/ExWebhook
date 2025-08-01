@@ -13,6 +13,7 @@ defmodule ExWebhook.WebhookRepository do
     query =
       from(w in Webhook,
         where: w.tenant_id == ^tenant,
+        preload: [:webhook_types],
         select: w
       )
 
