@@ -52,8 +52,6 @@ defmodule ExWebhook.WebhookExecutor do
     end
   end
 
-  defp execute_hook(error, _payload, _is_batch), do: error
-
   defp execute_hook(%{hook: hook, payload: payload, is_batch: is_batch}) do
     HTTPoison.post(
       hook.url,

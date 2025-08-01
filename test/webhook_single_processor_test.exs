@@ -65,7 +65,6 @@ defmodule ExWebhook.SingleProcessorTest do
           }
 
         _ ->
-          # Para outros tipos ou se nenhum for especificado
           %{}
       end
 

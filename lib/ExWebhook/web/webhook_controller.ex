@@ -25,10 +25,19 @@ defmodule ExWebhook.Web.WebhookController do
 
         json(conn, %{webhooks: formatted_webhooks})
 
-      {:error, error} ->
-        Logger.error("Error creating webhook: #{inspect(error)}")
+      {:connection_error, error} ->
+        Logger.error("Connection error while listing webhooks: #{inspect(error)}")
 
-        {:internal_server_error, "Internal server error"}
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
+
+      {:unexpected_error, error} ->
+        Logger.error("Unexpected error while listing webhooks: #{inspect(error)}")
+
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
     end
   end
 
