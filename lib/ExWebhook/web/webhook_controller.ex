@@ -81,12 +81,19 @@ defmodule ExWebhook.Web.WebhookController do
             conn
             |> send_resp(:no_content, "")
 
-          {:error, changeset} ->
-            Logger.error("Error to deactivate webhook #{inspect(changeset.errors)}")
+          {:connection_error, error} ->
+            Logger.error("Connection error while deactivating webhook: #{inspect(error)}")
 
             conn
             |> put_status(:internal_server_error)
-            |> json(%{error: "Error to deactivate webhook"})
+            |> json(%{error: "Internal server error"})
+
+          {:unexpected_error, error} ->
+            Logger.error("Unexpected error while deactivating webhook: #{inspect(error)}")
+
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{error: "Internal server error"})
         end
     end
   end
@@ -168,8 +175,12 @@ defmodule ExWebhook.Web.WebhookController do
       {:ok, entity} ->
         {:ok, ExWebhook.Repo.preload(entity, :webhook_events)}
 
-      {:error, error} ->
-        Logger.error("Error creating webhook (unexpected): #{inspect(error)}")
+      {:connection_error, error} ->
+        Logger.error("Connection error while inserting webhook: #{inspect(error)}")
+        {:error, "Internal server error"}
+
+      {:unexpected_error, error} ->
+        Logger.error("Unexpected error while inserting webhook: #{inspect(error)}")
         {:error, "Internal server error"}
     end
   end
