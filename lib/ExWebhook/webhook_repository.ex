@@ -27,9 +27,9 @@ defmodule ExWebhook.WebhookRepository do
     DatabaseUtils.safe_call(fn -> Repo.all(query) end)
   end
 
-  @spec insert(Webhook.t()) :: {:ok, Webhook.t() | DatabaseUtils.database_error()}
-  def insert(webhook) do
-    DatabaseUtils.safe_call(fn -> Repo.insert!(webhook) end)
+  @spec insert(Ecto.Changeset.t()) :: {:ok, Webhook.t() | DatabaseUtils.database_error()}
+  def insert(changeset) do
+    DatabaseUtils.safe_call(fn -> Repo.insert!(changeset) end)
   end
 
   @spec update(Ecto.Changeset.t()) :: {:ok, Webhook.t() | DatabaseUtils.database_error()}
