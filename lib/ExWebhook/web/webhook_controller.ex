@@ -73,8 +73,7 @@ defmodule ExWebhook.Web.WebhookController do
         |> json(%{error: "Webhook with #{webhook_id} not found"})
 
       webhook ->
-        principal_data = conn.assigns[:principal_data]
-        changeset = WebhookSchema.deactivate_changeset(webhook, principal_data.preferred_username)
+        changeset = WebhookSchema.deactivate_changeset(webhook)
 
         case WebhookRepository.update(changeset) do
           {:ok, _webhook} ->

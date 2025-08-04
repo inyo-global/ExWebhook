@@ -126,10 +126,6 @@ defmodule ExWebhook.Web.WebhookControllerTest do
     response =
       conn
       |> put_req_header("content-type", "application/json")
-      |> put_req_header(
-        "authorization",
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ2NTk4MjMsImF6cCI6ImQ0ZDZhYzhmLTk1NjktNGU0ZC1iNzk1LThlYWI1OTBjNWJlMCIsInN1YiI6IjM2NTgzZTE2LWU3N2ItNGM1OC1iMWFjLTAwODMyMjAxN2IwZiIsInByZWZlcnJlZF91c2VybmFtZSI6ImVsaXhpcl91c2VyIn0.w-gP4Lw2Q2_w0l6_I_s4J_9m7G6_bS3Q_fB7bN7b6Lg"
-      )
       |> delete(endpoint)
 
     assert response.status == 204

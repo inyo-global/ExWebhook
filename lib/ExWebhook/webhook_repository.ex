@@ -12,7 +12,7 @@ defmodule ExWebhook.WebhookRepository do
   def list_webhooks(tenant, is_batch) do
     query =
       from(w in Webhook,
-        where: w.tenant_id == ^tenant and w.deactivated == false,
+        where: w.tenant_id == ^tenant and is_nil(w.deactivated_at),
         preload: [:webhook_events],
         select: w
       )
