@@ -65,6 +65,38 @@ defmodule ExWebhook.Web.WebhookController do
     end
   end
 
+  def delete(conn, %{"tenant" => tenant_id, "id" => webhook_id}) do
+    case ExWebhook.Repo.get_by(WebhookSchema, id: webhook_id, tenant_id: tenant_id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Webhook with #{webhook_id} not found"})
+
+      webhook ->
+        changeset = WebhookSchema.deactivate_changeset(webhook)
+
+        case WebhookRepository.update(changeset) do
+          {:ok, _webhook} ->
+            conn
+            |> send_resp(:no_content, "")
+
+          {:connection_error, error} ->
+            Logger.error("Connection error while deactivating webhook: #{inspect(error)}")
+
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{error: "Internal server error"})
+
+          {:unexpected_error, error} ->
+            Logger.error("Unexpected error while deactivating webhook: #{inspect(error)}")
+
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{error: "Internal server error"})
+        end
+    end
+  end
+
   defp validate_webhook_params(params = %{"url" => url}) do
     events = Map.get(params, "events", [])
 
@@ -138,12 +170,16 @@ defmodule ExWebhook.Web.WebhookController do
       webhook_changeset
       |> Ecto.Changeset.put_assoc(:webhook_events, webhook_event_attrs)
 
-    case ExWebhook.Repo.insert(final_changeset) do
+    case WebhookRepository.insert(final_changeset) do
       {:ok, entity} ->
         {:ok, ExWebhook.Repo.preload(entity, :webhook_events)}
 
-      {:error, error} ->
-        Logger.error("Error creating webhook (unexpected): #{inspect(error)}")
+      {:connection_error, error} ->
+        Logger.error("Connection error while inserting webhook: #{inspect(error)}")
+        {:error, "Internal server error"}
+
+      {:unexpected_error, error} ->
+        Logger.error("Unexpected error while inserting webhook: #{inspect(error)}")
         {:error, "Internal server error"}
     end
   end

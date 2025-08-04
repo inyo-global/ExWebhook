@@ -10,5 +10,6 @@ defmodule ExWebhook.Web.Router do
 
     post("/webhooks", WebhookController, :new)
     get("/webhooks", WebhookController, :index)
+    delete("/webhooks/:id", WebhookController, :delete)
   end
 end

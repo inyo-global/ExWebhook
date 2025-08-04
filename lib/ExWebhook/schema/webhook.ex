@@ -17,6 +17,8 @@ defmodule ExWebhook.Schema.Webhook do
     field(:is_batch, :boolean)
     has_many(:webhook_events, ExWebhook.Schema.WebhookEvent)
 
+    field(:deactivated_at, :utc_datetime)
+
     timestamps(inserted_at: :created_at, updated_at: false)
   end
 
@@ -24,5 +26,16 @@ defmodule ExWebhook.Schema.Webhook do
     webhook
     |> cast(attrs, [:tenant_id, :url, :is_batch])
     |> validate_required([:tenant_id, :url])
+  end
+
+  def deactivate_changeset(webhook) do
+    deactivated_at =
+      DateTime.utc_now()
+      |> DateTime.truncate(:second)
+
+    webhook
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:deactivated_at, deactivated_at)
+    |> Ecto.Changeset.validate_required([:deactivated_at])
   end
 end
