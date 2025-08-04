@@ -65,6 +65,32 @@ defmodule ExWebhook.Web.WebhookController do
     end
   end
 
+  def delete(conn, %{"tenant" => tenant_id, "id" => webhook_id}) do
+    case ExWebhook.Repo.get_by(WebhookSchema, id: webhook_id, tenant_id: tenant_id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Webhook with #{webhook_id} not found"})
+
+      webhook ->
+        principal_data = conn.assigns[:principal_data]
+        changeset = WebhookSchema.deactivate_changeset(webhook, principal_data.preferred_username)
+
+        case WebhookRepository.update(changeset) do
+          {:ok, _webhook} ->
+            conn
+            |> send_resp(:no_content, "")
+
+          {:error, changeset} ->
+            Logger.error("Error to deactivate webhook #{inspect(changeset.errors)}")
+
+            conn
+            |> put_status(:internal_server_error)
+            |> json(%{error: "Error to deactivate webhook"})
+        end
+    end
+  end
+
   defp validate_webhook_params(params = %{"url" => url}) do
     events = Map.get(params, "events", [])
 
@@ -138,7 +164,7 @@ defmodule ExWebhook.Web.WebhookController do
       webhook_changeset
       |> Ecto.Changeset.put_assoc(:webhook_events, webhook_event_attrs)
 
-    case ExWebhook.Repo.insert(final_changeset) do
+    case WebhookRepository.insert(final_changeset) do
       {:ok, entity} ->
         {:ok, ExWebhook.Repo.preload(entity, :webhook_events)}
 

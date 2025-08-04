@@ -12,7 +12,7 @@ defmodule ExWebhook.WebhookRepository do
   def list_webhooks(tenant, is_batch) do
     query =
       from(w in Webhook,
-        where: w.tenant_id == ^tenant,
+        where: w.tenant_id == ^tenant and w.deactivated == false,
         preload: [:webhook_events],
         select: w
       )
@@ -30,5 +30,10 @@ defmodule ExWebhook.WebhookRepository do
   @spec insert(Webhook.t()) :: {:ok, Webhook.t() | DatabaseUtils.database_error()}
   def insert(webhook) do
     DatabaseUtils.safe_call(fn -> Repo.insert!(webhook) end)
+  end
+
+  @spec update(Ecto.Changeset.t()) :: {:ok, Webhook.t() | DatabaseUtils.database_error()}
+  def update(changeset) do
+    DatabaseUtils.safe_call(fn -> Repo.update!(changeset) end)
   end
 end

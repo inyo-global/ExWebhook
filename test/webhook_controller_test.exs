@@ -39,6 +39,9 @@ defmodule ExWebhook.Web.WebhookControllerTest do
     create_webhook_request(conn, UUID.uuid4(), "https://example.com/hook5", ["event6"])
     create_webhook_request(conn, UUID.uuid4(), "https://postman-echo.com/post", [], false)
 
+    webhook = create_webhook_request(conn, tenant_id, "https://example.com/hook6", [], true)
+    delete_webhook_request(conn, tenant_id, webhook["id"])
+
     conn = get(conn, "/organizations/#{tenant_id}/webhooks")
 
     assert conn.status == 200
@@ -113,6 +116,23 @@ defmodule ExWebhook.Web.WebhookControllerTest do
       _ ->
         assert response_body["isBatch"] == is_batch
     end
+
+    response_body
+  end
+
+  defp delete_webhook_request(conn, tenant_id, webhook_id) do
+    endpoint = "/organizations/#{tenant_id}/webhooks/#{webhook_id}"
+
+    response =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header(
+        "authorization",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ2NTk4MjMsImF6cCI6ImQ0ZDZhYzhmLTk1NjktNGU0ZC1iNzk1LThlYWI1OTBjNWJlMCIsInN1YiI6IjM2NTgzZTE2LWU3N2ItNGM1OC1iMWFjLTAwODMyMjAxN2IwZiIsInByZWZlcnJlZF91c2VybmFtZSI6ImVsaXhpcl91c2VyIn0.w-gP4Lw2Q2_w0l6_I_s4J_9m7G6_bS3Q_fB7bN7b6Lg"
+      )
+      |> delete(endpoint)
+
+    assert response.status == 204
   end
 
   defp generate_webhook_payload(url, events, is_batch) do

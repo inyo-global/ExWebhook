@@ -3,6 +3,7 @@ defmodule ExWebhook.Web.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(PrincipalDataPlug)
   end
 
   scope "/organizations/:tenant", ExWebhook.Web do
@@ -10,5 +11,6 @@ defmodule ExWebhook.Web.Router do
 
     post("/webhooks", WebhookController, :new)
     get("/webhooks", WebhookController, :index)
+    delete("/webhooks/:id", WebhookController, :delete)
   end
 end
