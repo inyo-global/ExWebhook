@@ -8,4 +8,12 @@ config :webhook, ExWebhook.Web.Endpoint,
   url: [host: "localhost", port: 4000],
   server: true
 
+config :webhook, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      router: ExWebhook.Web.Router,
+      endpoint: ExWebhook.Web.Endpoint
+    ]
+  }
+
 import_config "#{config_env()}.exs"

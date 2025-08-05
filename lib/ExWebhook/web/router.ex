@@ -12,4 +12,17 @@ defmodule ExWebhook.Web.Router do
     get("/webhooks", WebhookController, :index)
     delete("/webhooks/:id", WebhookController, :delete)
   end
+
+  scope "/q/openapi" do
+    forward("/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :webhook, swagger_file: "swagger.json")
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0.0",
+        title: "Webhook API"
+      }
+    }
+  end
 end
