@@ -52,8 +52,7 @@ defmodule ExWebhook.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:phoenix_swagger, "~> 0.8", runtime: false},
-      {:poison, "~> 3.0"}
+      {:phoenix_swagger, "~> 0.8.4"}
     ]
   end
 
