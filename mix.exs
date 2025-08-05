@@ -16,6 +16,9 @@ defmodule ExWebhook.MixProject do
           include_executables_for: [:unix],
           applications: [runtime_tools: :permanent]
         ]
+      ],
+      dialyzer: [
+        plt_add_apps: [:phoenix_swagger]
       ]
     ]
   end
