@@ -157,7 +157,7 @@ defmodule ExWebhook.Web.WebhookController do
   end
 
   swagger_path :delete do
-    PhoenixSwagger.Path.delete("/organizations/{tenant}/webhooks/{walletId}")
+    PhoenixSwagger.Path.delete("/organizations/{tenant}/webhooks/{webhookId}")
     summary("Delete a registered webhook")
 
     description(
@@ -170,7 +170,7 @@ defmodule ExWebhook.Web.WebhookController do
     parameters do
       tenant(:string, :path, "The ID of the tenant")
 
-      walletId(:uuid, :path, "Webhook ID",
+      webhookId(:uuid, :path, "Webhook ID",
         required: true,
         example: "2ad37ee6-6ac5-4b0f-8917-fc9bbf1ee98f"
       )
