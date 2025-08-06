@@ -16,6 +16,9 @@ defmodule ExWebhook.MixProject do
           include_executables_for: [:unix],
           applications: [runtime_tools: :permanent]
         ]
+      ],
+      dialyzer: [
+        plt_add_apps: [:phoenix_swagger]
       ]
     ]
   end
@@ -51,7 +54,9 @@ defmodule ExWebhook.MixProject do
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:phoenix_swagger, "~> 0.8.4"},
+      {:poison, "~> 6.0"}
     ]
   end
 

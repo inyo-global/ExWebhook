@@ -20,7 +20,7 @@ WORKDIR /app
 COPY . .
 
 # instalar as dependencias
-RUN mix do deps.get, deps.compile, release
+RUN mix do deps.get, deps.compile, phx.swagger.generate, release
 
 FROM debian:trixie-slim AS app
 
