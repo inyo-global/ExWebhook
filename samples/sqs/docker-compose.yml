@@ -26,7 +26,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   webhook:
-    image: ghcr.io/inyo-global/ex-webhook:cf8b05c549e22738dbc1ddf3bcb5808d535768d2
+    image: ghcr.io/inyo-global/ex-webhook:e4e32199d9f8b045edb1ed9ca8ab6bb16180757b
     environment:
       ELIXIR_ERL_OPTIONS: "+fnu"    
     volumes:

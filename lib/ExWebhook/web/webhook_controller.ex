@@ -3,82 +3,28 @@ defmodule ExWebhook.Web.WebhookController do
   Webhook controller
   """
   use ExWebhook.Web, :controller
-  use PhoenixSwagger
   alias ExWebhook.Schema.Webhook, as: WebhookSchema
   alias ExWebhook.Schema.WebhookEvent, as: WebhookEventSchema
+  alias ExWebhook.Web.Schemas
   alias ExWebhook.WebhookRepository
   require Logger
 
-  def swagger_definitions do
-    %{
-      WebhookInput:
-        swagger_schema do
-          title("Webhook Input")
-          description("The input parameters for creating a new webhook.")
-
-          properties do
-            url(:string, "The URL to send webhook events to.")
-
-            isBatch(:boolean, "Indicates if events should be sent in a batch.",
-              required: false,
-              default: false
-            )
-
-            events(:array, "A list of event names to subscribe to.", items: :string)
-          end
-        end,
-      Webhook:
-        swagger_schema do
-          title("Webhook")
-          description("A registered webhook.")
-
-          properties do
-            id(:string, "The unique identifier of the webhook.", format: :uuid)
-            tenantId(:string, "The ID of the tenant.", format: :string)
-            url(:string, "The URL for the webhook.")
-            isBatch(:boolean, "Indicates if events are batched.")
-            events(:array, "A list of event names to subscribe to.", items: :string)
-            createdAt(:string, "The creation timestamp.", format: :"date-time")
-          end
-        end,
-      WebhookList:
-        swagger_schema do
-          title("Webhook List")
-          description("A list of webhooks.")
-
-          properties do
-            webhooks(:array, "The list of webhooks.", items: Schema.ref(:Webhook))
-          end
-        end,
-      Error:
-        swagger_schema do
-          title("Error")
-          description("An error response.")
-
-          properties do
-            error(:string, "The error message.")
-          end
-        end
-    }
-  end
-
-  swagger_path :index do
-    get("/organizations/{tenant}/webhooks")
-    summary("List webhooks")
-
-    description(
-      "This endpoint allows you to list all webhooks that you have registered to receive event updates from the system"
-    )
-
-    consumes("application/json")
-    produces("application/json")
-
-    parameters do
-      tenant(:string, :path, "The ID of the tenant")
-    end
-
-    response(200, "Success", Schema.ref(:WebhookList))
-  end
+  operation :index,
+    tags: ["Webhooks Resource"],
+    summary: "List webhooks",
+    description: "List all webhooks",
+    parameters: [
+      tenant: [
+        name: "tenant",
+        in: :path,
+        description: "The ID of the tenant",
+        required: true,
+        schema: %{type: :string}
+      ]
+    ],
+    responses: [
+      ok: Schemas.WebhookList
+    ]
 
   def index(conn, %{"tenant" => tenant_id}) do
     case WebhookRepository.list_webhooks(tenant_id, nil) do
@@ -113,24 +59,23 @@ defmodule ExWebhook.Web.WebhookController do
     end
   end
 
-  swagger_path :new do
-    post("/organizations/{tenant}/webhooks")
-    summary("Register a webhook")
-
-    description(
-      "This endpoint allows you to register a webhook that receives event updates from the system"
-    )
-
-    consumes("application/json")
-    produces("application/json")
-
-    parameters do
-      tenant(:string, :path, "The ID of the tenant")
-      body(Schema.ref(:WebhookInput), :body, "The body")
-    end
-
-    response(201, "Success", Schema.ref(:Webhook))
-  end
+  operation :new,
+    tags: ["Webhooks Resource"],
+    summary: "Register a webhook",
+    description: "Allows you to register a webhook that receives event updates from the system",
+    parameters: [
+      tenant: [
+        name: "tenant",
+        in: :path,
+        description: "The ID of the tenant",
+        required: true,
+        schema: %{type: :string}
+      ]
+    ],
+    request_body: {Schemas.WebhookRequest, [required: true]},
+    responses: [
+      created: Schemas.Webhook
+    ]
 
   def new(conn, %{"tenant" => tenant}) do
     with {:ok, params} <- validate_webhook_params(conn.body_params),
@@ -156,28 +101,28 @@ defmodule ExWebhook.Web.WebhookController do
     end
   end
 
-  swagger_path :delete do
-    PhoenixSwagger.Path.delete("/organizations/{tenant}/webhooks/{webhookId}")
-    summary("Delete a registered webhook")
-
-    description(
-      "This endpoint allows you to delete a webhook that is no longer needed. Deleting a webhook will stop it from receiving any future event updates"
-    )
-
-    consumes("application/json")
-    produces("application/json")
-
-    parameters do
-      tenant(:string, :path, "The ID of the tenant")
-
-      webhookId(:uuid, :path, "Webhook ID",
+  operation :delete,
+    tags: ["Webhooks Resource"],
+    summary: "Delete a registered webhook",
+    description:
+      "Allows you to delete a webhook that is no longer needed. Deleting a webhook will stop it from receiving any future event updates",
+    parameters: [
+      tenant: [
+        name: "tenant",
+        in: :path,
+        description: "The ID of the tenant",
         required: true,
-        example: "2ad37ee6-6ac5-4b0f-8917-fc9bbf1ee98f"
-      )
-    end
-
-    response(204, "Success")
-  end
+        schema: %{type: :string}
+      ],
+      webhookId: [
+        in: :path,
+        description: "Webhook ID",
+        schema: %{type: :string}
+      ]
+    ],
+    responses: %{
+      204 => nil
+    }
 
   def delete(conn, %{"tenant" => tenant_id, "id" => webhook_id}) do
     case ExWebhook.Repo.get_by(WebhookSchema, id: webhook_id, tenant_id: tenant_id) do

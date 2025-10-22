@@ -17,6 +17,8 @@ defmodule ExWebhook.Web do
       use Phoenix.Controller,
         formats: [:json]
 
+      use Oaskit.Controller
+
       import Plug.Conn
 
       unquote(verified_routes())

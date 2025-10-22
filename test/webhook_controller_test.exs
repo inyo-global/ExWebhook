@@ -7,6 +7,12 @@ defmodule ExWebhook.Web.WebhookControllerTest do
     :ok
   end
 
+  test "GET /q/openapi should return 200", %{conn: conn} do
+    conn = get(conn, "/q/openapi")
+
+    assert conn.status == 200
+  end
+
   test "GET /organizations/:tenant/webhooks should return 200 and empty list", %{conn: conn} do
     tenant_id = UUID.uuid4()
 

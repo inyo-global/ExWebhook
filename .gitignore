@@ -26,4 +26,3 @@ ExWebhook-*.tar
 /tmp/
 
 .DS_Store
-priv/static/swagger.json

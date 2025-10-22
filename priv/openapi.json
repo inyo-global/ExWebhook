@@ -1,0 +1,231 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Webhook API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:4000/"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Webhook": {
+        "title": "Webhook",
+        "additionalProperties": false,
+        "description": "A registered webhook.",
+        "example": {
+          "id": "5bec2748-d5fe-47bb-84ff-961ddee86c12",
+          "isBatch": false,
+          "url": "http://localhost:8080/inyo/webhooks"
+        },
+        "properties": {
+          "createdAt": {
+            "description": "The creation timestamp",
+            "format": "date-time",
+            "type": "string"
+          },
+          "events": {
+            "description": "A list of event names to subscribe to.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The unique identifier of the webhook",
+            "type": "string"
+          },
+          "isBatch": {
+            "description": "Indicates if events are batched",
+            "type": "boolean"
+          },
+          "url": {
+            "description": "The URL for the webhook",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "WebhookList": {
+        "title": "WebhookList",
+        "additionalProperties": false,
+        "description": "A list of webhooks.",
+        "example": {
+          "webhooks": [
+            {
+              "createdAt": "2025-03-07T13:21:29",
+              "events": [
+                "documentUpdatedEvents",
+                "agentUpdatedEvents"
+              ],
+              "id": "5bec2748-d5fe-47bb-84ff-961ddee86c12",
+              "isBatch": false,
+              "url": "http://localhost:8080/test/webhooks/agents"
+            },
+            {
+              "createdAt": "2025-08-04T18:25:07",
+              "events": [
+                "batchTransactionProcessedEvents"
+              ],
+              "id": "59f2c6f9-a476-4666-9c53-0c148d952c39",
+              "isBatch": true,
+              "url": "http://localhost:8080/test/webhooks/batch"
+            }
+          ]
+        },
+        "properties": {
+          "webhooks": {
+            "description": "The list of webhooks.",
+            "items": {
+              "$ref": "#/components/schemas/Webhook"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "WebhookRequest": {
+        "title": "WebhookRequest",
+        "additionalProperties": false,
+        "description": "The input parameters for creating a new webhook.",
+        "example": {
+          "events": [
+            "documentUpdatedEvents",
+            "agentUpdatedEvents"
+          ],
+          "url": "http://localhost:8080/test/webhooks/agents"
+        },
+        "properties": {
+          "events": {
+            "description": "A list of event names to subscribe to.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "isBatch": {
+            "description": "Indicates if events should be sent in a batch.",
+            "type": "boolean"
+          },
+          "url": {
+            "description": "The URL to send webhook events to.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "paths": {
+    "/organizations/{tenant}/webhooks": {
+      "get": {
+        "tags": [
+          "Webhooks Resource"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookList"
+                }
+              }
+            },
+            "description": "no description"
+          }
+        },
+        "description": "List all webhooks",
+        "operationId": "webhook_index_7XBUVEQ",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "List webhooks"
+      },
+      "post": {
+        "tags": [
+          "Webhooks Resource"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webhook"
+                }
+              }
+            },
+            "description": "no description"
+          }
+        },
+        "description": "Allows you to register a webhook that receives event updates from the system",
+        "operationId": "webhook_new_7XBUVEQ",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "summary": "Register a webhook"
+      }
+    },
+    "/organizations/{tenant}/webhooks/{id}": {
+      "delete": {
+        "tags": [
+          "Webhooks Resource"
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "no description"
+          }
+        },
+        "description": "Allows you to delete a webhook that is no longer needed. Deleting a webhook will stop it from receiving any future event updates",
+        "operationId": "webhook_delete_7XBUVEQ",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "webhookId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Delete a registered webhook"
+      }
+    }
+  }
+}
