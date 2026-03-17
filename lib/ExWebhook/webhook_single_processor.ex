@@ -52,7 +52,7 @@ defmodule ExWebhook.SingleProcessor do
         Logger.info("message #{message_data} processed with success")
 
       error ->
-        Logger.error(Logger.info("message #{message_data} failed with #{inspect(error)}"))
+        Logger.error("message #{message_data} failed with #{inspect(error)}")
     end
 
     message
