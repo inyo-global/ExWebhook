@@ -23,6 +23,7 @@ defmodule ExWebhook.WebhookExecutor do
       if topic do
         Enum.filter(hooks, fn hook ->
           webhook_event_names = Enum.map(hook.webhook_events, fn event -> event.event_name end)
+
           Enum.any?(webhook_event_names, &(String.downcase(&1) == String.downcase(topic))) or
             hook.webhook_events == []
         end)
