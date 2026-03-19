@@ -62,4 +62,32 @@ defmodule ExWebhook.WebhookExecutorTest do
     assert :webhook_not_found =
              WebhookExecutor.execute_webhook("test_payload", hook2.tenant_id, false, "any")
   end
+
+  test "When topic case differs from event_name case, webhook is still matched" do
+    hook = Factory.insert!(:webhook, %{is_batch: false}, ["transactionStatusChanged"])
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook.tenant_id,
+               false,
+               "TransactionStatusChanged"
+             )
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook.tenant_id,
+               false,
+               "transactionstatuschanged"
+             )
+
+    assert :ok =
+             WebhookExecutor.execute_webhook(
+               "test_payload",
+               hook.tenant_id,
+               false,
+               "TRANSACTIONSTATUSCHANGED"
+             )
+  end
 end
